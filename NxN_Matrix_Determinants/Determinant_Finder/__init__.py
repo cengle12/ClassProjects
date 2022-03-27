@@ -1,0 +1,1 @@
+from Determinant_Finder.det_finder import run_script
