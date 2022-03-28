@@ -10,52 +10,7 @@
     <link rel="stylesheet" type="text/css" href="css/searchResult.css" />
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
     <script type="text/javascript" src="js/search.js"></script>
-    <script>
-        $(document).ready(function(){
-            $("#gene_search").onkeydown(function(){
-                var search = $(this).val();
-                runSearch(var);
-                if(search != ""){
-
-                    $.ajax({
-                        url: './search_product.cgi',
-                        type: 'get',
-                        data: search,
-                        dataType: 'json',
-                        success:function(response){
-
-                            $("#searchResult").empty();
-                            for( var i = 0; i<6; i++){
-                                var locus_id = response[i]['locus_id'];
-                                var product = response[i]['product'];
-
-                                $("#searchResult").append("<li value='"+locus_id+"'>"+product+"</li>");
-
-                            }
-
-                            // binding click event to li
-                            $("#searchResult li").bind("click",function(){
-                                setText(this);
-                            });
-
-                        }
-                    });
-                }
-
-            });
-
-        });
-
-        // Set Text to search box
-        function setText(element){
-
-            var value = $(element).text();
-
-            $("#txt_search").val(value);
-            $("#searchResult").empty();
-        }
-
-    </script>
+	
 </head>
 
 <body id="main">
