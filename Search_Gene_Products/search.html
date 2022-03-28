@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Autocomplete</title>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    <link rel="stylesheet" type="text/css" href="css/search_product.css" />
+    <link rel="stylesheet" type="text/css" href="css/searchResult.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/search.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#gene_search").onkeydown(function(){
+                var search = $(this).val();
+                runSearch(var);
+                if(search != ""){
+
+                    $.ajax({
+                        url: './search_product.cgi',
+                        type: 'get',
+                        data: search,
+                        dataType: 'json',
+                        success:function(response){
+
+                            $("#searchResult").empty();
+                            for( var i = 0; i<6; i++){
+                                var locus_id = response[i]['locus_id'];
+                                var product = response[i]['product'];
+
+                                $("#searchResult").append("<li value='"+locus_id+"'>"+product+"</li>");
+
+                            }
+
+                            // binding click event to li
+                            $("#searchResult li").bind("click",function(){
+                                setText(this);
+                            });
+
+                        }
+                    });
+                }
+
+            });
+
+        });
+
+        // Set Text to search box
+        function setText(element){
+
+            var value = $(element).text();
+
+            $("#txt_search").val(value);
+            $("#searchResult").empty();
+        }
+
+    </script>
+</head>
+
+<body id="main">
+
+	<h1>E. coli gene search</h1>
+    <form name="gene_search" id="gene_search" action="">
+        <input name="search_term" type="search" id = 'txt_search' value="" autofocus="autofocus" placeholder="Enter a search term"/>
+        <ul id = 'searchResult'>
+
+        </ul>
+        <input name="submit" type="submit" id="submit" value="submit">
+    </form>
+    <section id='results'>
+        <p>
+            <span id='match_count'>0</span> match(es) found.
+        </p>
+        <table>
+            <thead>
+            <tr>
+                <td>Locus tag</td>
+                <td>Product</td>
+            </tr>
+            </thead>
+            <tbody>
+                <!-- this will be filled in by javascript when there are results -->
+            </tbody>
+    </section>
+
+</body>
+
+</html>
