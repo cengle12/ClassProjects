@@ -1,2 +1,2 @@
 # ClassProjects
-Various projects while in school
+Various projects from classes while attending Johns Hopkins
