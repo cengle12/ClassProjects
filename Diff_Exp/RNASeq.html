@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Perform Differential Expression Analysis</title>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+    <link rel="stylesheet" type="text/css" href="css/RNASeq.css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/RNASeq.js"></script>
+</head>
+
+<body id="main">
+
+	<h1>Perform Differential Expression Analysis</h1>
+        <form name="Input_Section" id="Input_Section" action="">
+            <section class="input_section" id="raw_counts_section">
+                <div>Select a file containing a matrix of raw counts</div>
+                <input name="raw_counts_csv" type="text" id = 'raw_counts_file' value="" placeholder="Ex: CountsMatrix.csv"/>
+            </section>
+
+            <section class="input_section" id="design_file_section">
+                <div>Select a file containing the design of the experiment conditions</div>
+                <input name="design_file_csv" type="text" id = 'design_file' value="" placeholder="Ex: DesignMatrix.csv"/>
+            </section>
+
+            <section class="input_section" id="design_section">
+                <div>Enter your study factors for analysis</div>
+                <input name="study_design_factor" type="text" id = 'study_design' value="" placeholder="Ex: condition"/>
+            </section>
+
+            <section class="input_section" id="control_section">
+                <div>Enter your control subgroup name</div>
+                <input name="control_group_subfactor" type="text" id = 'control_group' value="" placeholder="Ex: colon"/>
+            </section>
+
+            <section class="input_section" id="exp_section">
+                <div>Enter your experimental subgroup name</div>
+                <input name="exp_group_subfactor" type="text" id="exp_group" value="" placeholder="Ex: liver"/>
+            </section>
+
+            <input name="submit" type="submit" id="submit" value="Submit">
+        </form>
+
+        <section class="submit_process" id="Request_Sent">
+            Query has been submitted to the server. Please allow a couple minutes for processing.
+        </section>
+        <section class="submit_process" id="Processing">Response Received from server. Formatting data.</section>
+        <section id='results'>
+            <p id="results_info">
+                <span id='results_count'>0</span> expression difference(s) found.<br/>
+                <span id="control">_</span> vs.
+                <span id="exp">_</span>
+            </p>
+            <table>
+                <thead>
+                <tr>
+                    <td>Gene ID</td>
+                    <td>Gene Name</td>
+                    <td>Base Mean</td>
+                    <td>Log2-Fold Change</td>
+                    <td>Standard Error</td>
+                    <td>Adjusted p-value</td>
+                </tr>
+                </thead>
+                <tbody>
+                    <!-- this will be filled in by javascript when there are results -->
+                </tbody>
+        </section>
+</body>
+
+</html>

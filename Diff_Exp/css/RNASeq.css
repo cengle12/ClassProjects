@@ -1,0 +1,73 @@
+.clear{
+ clear:both;
+ margin-top: 20px;
+}
+
+.submit_process {
+    color: royalblue;
+    margin-top: 10px;
+    display: none;
+}
+
+h1{
+    width:100%;
+    border-style: solid;
+    text-align: center;
+    background-color: lemonchiffon;
+    border-radius: 10px;
+}
+
+.input_section{
+    margin: 10px 0px;
+    padding: 10px 5px;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: lemonchiffon;
+}
+
+div{
+    font-weight: bold;
+    font-size: medium;
+    margin: 0px 0px 5px 0px
+}
+
+input[type=text]{
+ padding: 5px;
+ width: 250px;
+ letter-spacing: 1px;
+}
+
+section#results {
+    display: none;
+    width: 100%;
+}
+
+span {
+    font-weight: bold;
+}
+
+#results_info {
+    text-align: center;
+    color: royalblue;
+}
+
+table {
+    border: 2px solid;
+    background-color: lemonchiffon;
+    border-collapse: collapse;
+    margin-bottom: 50px;
+    width: 90%;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table thead td {
+    font-weight: bold;
+}
+
+table td {
+    border: 1px solid rgb(200, 200, 200);
+    padding: 2px 10px;
+}
