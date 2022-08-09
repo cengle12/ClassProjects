@@ -1,0 +1,73 @@
+
+
+# AS.410.671.82.SU22 – Final Project
+# Date: 16AUG2022
+# Author: Conner Engle
+
+# Information and data used for this project can be found at: www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS3032
+
+# Title   :	
+#	 - Quercetin effect on intestinal cell differentiation in vitro: time course
+# Summary :	
+#	- Analysis of post-confluent Caco-2 colon cancer cells up to 10 days after treatment with ascorbate-
+#	  stabilized quercetin, a polyphenol antioxidant compound. Caco-2 cells differentiate after reaching
+#	  confluency. Results provide insight into quercetin's role in cell-proliferation and -differentiation.
+#
+# Organism:	
+#	- Homo sapiens
+
+# Platform:	 
+#	- GPL571: [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array
+
+# Citation:	
+#	- 	Dihal AA, Tilburgs C, van Erk MJ, Rietjens IM et al. Pathway and single gene analyses of inhibited Caco-2 
+#     differentiation by ascorbate-stabilized quercetin suggest enhancement of cellular processes associated 
+#     with development of colon cancer. 
+# -   Mol Nutr Food Res 2007 
+# -   Aug;51(8):1031-45. 
+# -   PMID: 17639512
+
+library(GEOquery)
+library(gplots)
+library(impute)
+library(outliers)
+library(EMA)
+library(MASS)
+library(multtest)
+
+##########
+# PART I - Loading/Formatting Data and Annotation
+##########
+
+# Working directory set to location with data and annotation files
+setwd('/Users/Conner/Desktop')
+
+# Loading GEO data object and formatting columns based on treatment factor
+geo <- getGEO("GDS3032")
+geo.dat <- Table(geo)
+
+control.cols <- 3:6
+exp.cols <- 7:10
+for (i in control.cols)  { colnames(geo.dat)[i] <- paste(colnames(geo.dat[i]), "control", sep = "_") }
+for (i in exp.cols)  { colnames(geo.dat)[i] <- paste(colnames(geo.dat[i]), "quercetin", sep = "_") }
+dat <- data.matrix(geo.dat[, (3:ncol(geo.dat))])
+
+# Loading annotation file into dataframe for reference
+ann.dat <- read.delim('GPL571.annot', header = TRUE, row.names = 1, skip = 27, sep = "\t")
+ann.dat  <- ann.data[1:nrow(geo.dat), ]
+genes <- data.frame(Description = ann.dat$Gene.title, Symbol = ann.dat$Gene.symbol)
+rownames(genes) <- rownames(ann.dat)
+
+# set dat matrix rows as probe names from annotation file
+row.names(dat) <- row.names(ann.dat)
+
+dim(dat)
+
+# After formatting we can see that the dataset has 8 samples and 22,277 probes. Now we are ready to analyze the data
+
+
+##########
+# PART II - Outlier Detection
+##########
+
+
