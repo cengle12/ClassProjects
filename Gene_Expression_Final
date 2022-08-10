@@ -67,7 +67,34 @@ dim(dat)
 
 
 ##########
-# PART II - Outlier Detection
+# PART II - Data Visualizations and Descriptive Statistics
+##########
+
+# Standard dev and row means across samples
+d.sd    <- apply(dat, 1, sd, na.rm = TRUE)
+> d.rmeans <- rowMeans(dat, na.rm = TRUE)
+
+# Histogram of std dev
+hist(
+  	d.sd, 
+  	col  = "Green",
+  	xlab = "Standard Deviation expression value for GDS3032 samples",
+  	ylab = "Frequency",
+  	main = paste("Histogram of standard deviation expression values for",nrow(dat),"genes)
+  	)
+
+# Histogram of row means
+hist(
+  	d.rmeans, 
+  	col  = "Red",
+  	xlab = "Mean expression value for GDS3032 samples",
+  	ylab = "Frequency",
+  	main = paste("Histogram of mean expression values for",nrow(dat),"genes")
+  	)
+
+
+##########
+# PART III - Outlier Detection
 ##########
 
 
