@@ -183,5 +183,19 @@ num.removed
 # 
 # Aka 90 low variation genes removed
 
-
 dat.lg <- log2(dat.filt)
+lg.mean <- apply(dat.lg, 1, mean) 
+lg.var <- apply(dat.lg,1,var)
+lg.cv <- lg.var/lg.mean
+
+plot(
+ 	lg.mean, 
+ 	lg.cv, 
+ 	xlab = "log2(RowMeans)",
+ 	ylab = "log2(CV)", ylim=c(-50,50),
+ 	main = "Plot of Row Mean v. Row Variance for control and quercetin samples across filtered genes",
+ 	col  = c(rep("Blue", ncol(dat)/2), rep("Green", ncol(dat)/2)),
+ 	pch  = c(rep(17, ncol(dat)/2), rep(19, ncol(dat)/2))
+ 	)
+  
+  
