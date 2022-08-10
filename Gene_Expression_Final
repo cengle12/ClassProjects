@@ -173,4 +173,14 @@ colSums(is.na(dat))
 # PART IV - Gene Filtering
 ##########
 
+# First remove genes with very little variation (essentially zero) variation across samples 
+dat.filt <- subset(dat, log2(rowMeans(dat)) > 0)
+num.removed <- nrow(dat) - nrow(dat.filt)
+
+num.removed
+# Output:
+# 90 
+# 
+# Aka 90 low variation genes removed
+
 
