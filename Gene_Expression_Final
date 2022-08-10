@@ -54,7 +54,7 @@ dat <- data.matrix(geo.dat[, (3:ncol(geo.dat))])
 
 # Loading annotation file into dataframe for reference
 ann.dat <- read.delim('GPL571.annot', header = TRUE, row.names = 1, skip = 27, sep = "\t")
-ann.dat  <- ann.data[1:nrow(geo.dat), ]
+ann.dat  <- ann.dat[1:nrow(geo.dat), ]
 genes <- data.frame(Description = ann.dat$Gene.title, Symbol = ann.dat$Gene.symbol)
 rownames(genes) <- rownames(ann.dat)
 
@@ -72,7 +72,7 @@ dim(dat)
 
 # Standard dev and row means across samples
 d.sd    <- apply(dat, 1, sd, na.rm = TRUE)
-> d.rmeans <- rowMeans(dat, na.rm = TRUE)
+d.rmeans <- rowMeans(dat, na.rm = TRUE)
 
 # Histogram of std dev
 hist(
@@ -94,7 +94,83 @@ hist(
 
 
 ##########
-# PART III - Outlier Detection
+# PART III - Outlier Detection & Missing Value Imputation
+##########
+
+# Correlation matrix of data
+dat.cor <- cor(dat, method = "pearson", use = "pairwise.complete.obs")
+
+layout(matrix(c(1,1,1,1,1,1,1,1,2,2), 5, 2, byrow = TRUE))
+par(oma=c(5,7,1,1))
+cx <- rev(colorpanel(25,"yellow","black","blue"))
+leg <- seq(min(dat.cor,na.rm=T),max(dat.cor,na.rm=T),length=10)
+image(dat.cor,main="Correlation plot GDS3032 data",axes=F,col=cx)
+axis(1,at=seq(0,1,length=ncol(dat.cor)),label=dimnames(dat.cor)[[2]],cex.axis=0.9,las=2)
+axis(2,at=seq(0,1,length=ncol(dat.cor)),label=dimnames(dat.cor)[[2]],cex.axis=0.9,las=2)
+
+image(as.matrix(leg),col=cx,axes=F)
+tmp <- round(leg,2)
+axis(1,at=seq(0,1,length=length(leg)),labels=tmp,cex.axis=1)
+
+# PCA Plot of Samples
+dat.pca <- prcomp(t(dat))
+dat.loads <- dat.pca$x[,1:2]
+plot(dat.loads[,1],dat.loads[,2],main="Sample PCA plot",xlab="p1",ylab="p2",col='red',cex=1,pch=15)
+text(dat.loads,label=dimnames(dat)[[2]],pos=1,cex=0.5)
+
+
+# Correlation plot of gene averages for control and quercetin by timepoints (5 vs. 10 days)
+cor.m <- apply(dat.cor, 1, mean)
+
+plot(
+  	c(1,length(cor.m)), 
+  	range(cor.m), 
+  	type = "n", 
+  	xlab = "",
+  	ylab = "Average correlation",
+  	main = "Avg correlation for control/quercetin samples by timepoint",
+  	axes = FALSE
+  	)
+
+points(
+  	cor.m,
+  	col = c(rep("Blue", ncol(dat)/4), rep("Green", ncol(dat)/4), rep("Orange", ncol(dat)/4), rep("Red", ncol(dat)/4)),
+  	pch = c(rep(16, ncol(dat)/4), rep(17, ncol(dat)/4), rep(18, ncol(dat)/4), rep(19, ncol(dat)/4))
+  	)
+
+axis(2)
+axis(1, at=c(1:length(cor.m)), labels = colnames(dat), las = 2, cex.lab = 0.3, cex.axis = 0.5)
+grid(nx = 16, col = "grey")
+
+legend(
+  	"bottomright",cex=0.8, 
+  	c("Control - 5 days", "Control - 10 days", "Quercetin - 5 days", "Quercetin - 10 days"), 
+  	pch = c(16:19), col = c("Blue", "Green", "Orange", "Red"), bg = "white"
+  	)
+
+# CV vs. mean plot
+dat.mean <- apply(log2(dat),2,mean)
+dat.sd <- sqrt(apply(log2(dat),2,var))
+dat.cv <- dat.sd/dat.mean
+
+plot(dat.mean,dat.cv,main="GDS3032 GEO Dataset\nSample CV vs. Mean",xlab="Mean",ylab="CV",col='blue',cex=1.5,type="n")
+points(dat.mean,dat.cv,bg="lightblue",col=1,pch=21)
+text(dat.mean,dat.cv,label=dimnames(dat)[[2]],pos=1,cex=0.5)
+
+# Although the data shows wide variation across different factors, groups of the same factors are fairly similar. GSM174949
+# and GSM174950 show the largest amount of discrepancy within groups but it is difficult to tell whether an outlier exists
+# without more samples across the same factors. No samples will be removed as an outlier.
+
+
+# Missing value imputation
+colSums(is.na(dat))
+
+# No missing values so no imputation necessary
+# dat.knn <- impute.knn(dat.kng1,6)
+
+
+##########
+# PART IV - Gene Filtering
 ##########
 
 
