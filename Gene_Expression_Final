@@ -184,3 +184,4 @@ num.removed
 # Aka 90 low variation genes removed
 
 
+dat.lg <- log2(dat.filt)
