@@ -394,3 +394,49 @@ write.table(cutoff.genes, file = "Cutoff_Genes.csv", sep = ",", col.names = NA, 
 ord <- order(pv)[1:length(pv)]
 dat.3 <- 2^dat.2[ord, ]
 
+top.genes <- data.frame(
+  					index = ord,
+  					exp   = 2^dat.2[ord, ],
+  					pval  = pv[ord]
+  				)
+top.p <- top.genes$pval[top.genes$pval < 0.05]
+
+# Histogram of top gene p-values
+hist(
+  	top.p,
+  	col  = "lightblue",
+  	xlab = "P-Value",
+  	ylab = "Frequency",
+  	main = "Histogram of T-Test P-Values values for ranked genes GDS3032"
+  	)
+abline(v = 0.05, col = 2, lwd = 2)
+
+# Top and bottom 5 ranked genes from subset
+top.5    <- head(dat.3, n = 5L)
+
+# Output:
+#         GSM174945_control GSM174946_control GSM174949_control GSM174950_control GSM174819_quercetin GSM174944_quercetin GSM174947_quercetin GSM174948_quercetin
+# 206199_a          4.54794           9.16003           5.45883           6.04873           93.005800           89.448200           89.982900           95.619300
+# 220726_at         7.23891           7.63533           9.01140           7.31185            0.417399            0.270324            0.571531            0.450969
+# 203108_at         158.58600         133.69600         142.63000         123.92300          543.428000          560.836000          458.816000          464.183000
+# 218162_at         133.69600         164.54100         158.99800         152.86000           53.758900           59.972800           66.027000           61.102300
+# 212444_at         178.66200         197.53500         168.75600         146.18300          637.492000          607.951000          507.303000          531.807000
+
+bottom.5 <- tail(dat.3.info, n = 5L)
+
+# Output:
+#           GSM174945_control GSM174946_control GSM174949_control GSM174950_control GSM174819_quercetin GSM174944_quercetin GSM174947_quercetin GSM174948_quercetin
+# 221091_at           8.23675           9.52495           10.8211           2.87859             11.7485             8.65834             2.83046             8.48339
+# 201965_s_at         133.75200          99.57240          171.5570         127.68500            131.0810           101.75900           128.50600           170.22300
+# 203387_s_at         308.05900         381.61800          166.1550         144.44100            413.0110           406.01500           135.19700           124.49200
+# 210645_s_at         789.87900         731.44800          813.3510         669.77600            767.9700           799.61200           832.88700           615.35300
+# 215421_at           5.01988           8.58506           13.1882           1.47508             13.6813             1.44688             3.43275            12.33490
+
+
+##########
+# PART VI - Dimensionality Reduction
+##########
+
+
+
+
