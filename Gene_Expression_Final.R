@@ -79,7 +79,7 @@ hist(
   	col  = "Green",
   	xlab = "Standard Deviation expression value for GDS3032 samples",
   	ylab = "Frequency",
-  	main = paste("Histogram of standard deviation expression values for",nrow(dat),"genes)
+  	main = paste("Histogram of standard deviation expression values for",nrow(dat),"genes")
   	)
 
 # Histogram of row means
