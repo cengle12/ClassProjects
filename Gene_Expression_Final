@@ -322,3 +322,75 @@ hist(
   	)
 legend("bottomright", legend = colnames(tot.p), pch = 16, col = c("lightblue", "green"),bg='white')
 
+# Log2 Fold Change
+control.vals  <- dat.2[, 1:4]
+con.m    <- apply(control.vals, 1, mean, na.rm = TRUE)
+quer.vals <- dat.2[, 5:8]
+quer.m   <- apply(quer.vals, 1, mean, na.rm = TRUE)
+fold.change <- con.m - quer.m
+
+# Find genes with 2-fold change and create dataframe to store
+fold.2 <- lapply(as.list(fold.change), function(x){ if (abs(x) > log2(2)) TRUE else FALSE })
+fold.dat   <- as.data.frame(do.call(rbind, fold.2))
+names(fold.dat) <- c("2.fold")
+
+# Breakdown of 2-fold change
+table(fold.dat$2.fold)
+# Output:
+# FALSE  TRUE 
+# 17718  3128 
+
+# Histogram distribution of log2 fold change
+hist(
+  	fold.change, 
+  	col  = "lavender",
+  	xlab = "Log2 Fold Change",
+  	ylab = "Frequency",
+  	main = paste("Histogram of Fold Change values for GDS3032 genes")
+  	)
+abline(v = log2(2), col = 2, lwd = 2)
+abline(v = -log2(2), col = 2, lwd = 2)
+
+# Volcano Plot
+p.transformed <- (-1 * log10(pv))
+ 
+plot(
+  	range(p.transformed),
+  	range(fold.change),
+  	type = "n", xlab = "-1 * log10(P-Value)", ylab = "Fold Change",
+  	main = "Volcano Plot Illistrating  Control vs. Quercetin Differences"
+  	)
+points(
+  	p.transformed, fold.change,
+  	col = 1, bg = 1, pch = 21
+  	)
+points(
+  	p.transformed[(p.transformed > -log10(0.05) & fold.change > log2(2))],
+  	fold.change[(p.transformed > -log10(0.05) & fold.change > log2(2))],
+  	col = 1, bg = 2, pch = 21
+  	)
+points(
+  	p.transformed[(p.transformed > -log10(0.05) & fold.change < -log2(2))],
+  	fold.change[(p.transformed > -log10(0.05) & fold.change < -log2(2))],
+  	col = 1, bg = 3, pch = 21
+  	)
+abline(v = -log10(0.05))
+abline(h = -log2(2))
+abline(h = log2(2))
+
+# Insert p cutoff and fold-change cutoff into gene annotation dataframe
+p.cutoff <- lapply(as.list(pv), function(f){ if (f < 0.05) TRUE else FALSE })
+p.col <- as.data.frame(do.call(rbind, p.cutoff), rname = row.names(dat.2))
+colnames(p.col) <- c('PVal.Met')
+genes$PVal.Met <- p.col$PVal.Met
+
+genes$Fold.Met <- fold.dat$Fold.Test
+
+# Isolate Genes that meet both criteria
+cutoff.genes <- subset(genes, (PVal.Met & Fold.Met) == TRUE)
+write.table(cutoff.genes, file = "Cutoff_Genes.csv", sep = ",", col.names = NA, qmethod = "double")
+
+# Ordering data by p-value and converting back from log2 values
+ord <- order(pv)[1:length(pv)]
+dat.3 <- 2^dat.2[ord, ]
+
