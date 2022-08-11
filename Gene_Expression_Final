@@ -31,7 +31,6 @@ library(GEOquery)
 library(gplots)
 library(impute)
 library(outliers)
-library(EMA)
 library(MASS)
 library(multtest)
 
@@ -235,23 +234,91 @@ dat.2 <- dat.filt2
 # PART V - Feature Selection
 ##########
 
-# Determine P values for each gene
-type <- lapply(colnames(dat.2), 
-  	function(x) {
-  		if(regexpr("control", x) < 1) {"quercetin"} else {"control"}
-  	})
+# Determine raw P values for each gene
+con <- colnames(dat.2)[1:4]
+quer <- colnames(dat.2)[5:8]
 
-pval <- c()
-for (i in seq(nrow(dat.2))){
-  	t <- t.test(2^dat.2[i, type == "control"], 2^dat.2[i, type == "quercetin"], alternative = "two.sided")
-  	pval <- c(pval, t$p.value)
+t.test.all.genes <- function(x,s1,s2) {
+  x1 <- x[s1]
+  x2 <- x[s2]
+  x1 <- as.numeric(x1)
+  x2 <- as.numeric(x2)
+  t.out <- t.test(x1,x2, alternative="two.sided",var.equal=T)
+  out <- as.numeric(t.out$p.value)
+  return(out)
   }
 
-> sum(pval <0.05)
-# Output:
-# 1713
+pv <- apply(dat.2,1,t.test.all.genes,s1=con,s2=quer)
 
-> sum(pval < 0.01)
+> sum(pv < 0.05)
 # Output:
-# 458
+# 2119
+
+> sum(pv < 0.01)
+# Output:
+# 657
+
+# Adjusting p-value cutoff to bonferroni corrected value
+bonf <- 0.05/length(pv)
+bonf
+# Output:
+# 2.398542e-06
+
+sum(pv < bonf)
+# Output:
+# 3
+# Only three genes meet bonferroni adjusted cutoff!
+
+# Table for comparison of top 15 p-values 
+holm.pv <- p.adjust(pv, method = "holm")
+raw.pv  <- sort(pv)
+holm.pv <- sort(holm.pv)
+p1     <- as.matrix(raw.pv)
+p2     <- as.matrix(holm.pv)
+tot.p  <- cbind(p1, p2)
+colnames(tot.p) <- c('Raw P-Value', 'Adjusted P-Value')
+
+write.matrix(head(tot.p,15),file="SelectionPVals_Top15.csv")
+
+sum(holm.pv < 0.05)
+# Output:
+# 3
+# Consistent with Bonferroni corrected cutoff
+
+sum(holm.pv < 0.01)
+# Output:
+# 0
+
+# Plot of raw P-values
+plot(
+  	raw.pv, type = "b", pch = 1, col = "lightblue",
+  	xlab = "Genes",
+  	ylab = "P-values",
+  	main = "Raw P-values for All Genes in GDS3032\n"
+)
+abline(h=0.05,col='red')
+
+# Plot of raw vs adjusted P-values
+matplot(
+  	tot.p, type = "b", pch = 1, col = 1:2,
+  	xlab = "Genes",
+  	ylab = "P-values",
+  	main = "Raw vs. Adjusted P-values for All Genes in GDS3032\n"
+  	)
+abline(h=0.05,col='red')   # Shows how conservative bonferroni adjustment is
+
+# Histogram distribution of raw and adjusted p-values for GDS3032 genes
+hist(
+  	pv, 
+  	col  = "lightblue",
+  	xlab = "P-Value",
+  	ylab = "Frequency",
+  	main = "Histogram of t-test p-values for GDS3032 genes"
+  	)
+hist(
+  	holm.pv, 
+  	col  = "darkgreen",
+  	add  = TRUE 
+  	)
+legend("bottomright", legend = colnames(tot.p), pch = 16, col = c("lightblue", "green"),bg='white')
 
