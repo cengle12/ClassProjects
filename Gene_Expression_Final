@@ -228,5 +228,30 @@ plot(
 legend("bottomright", c("control", "quercetin"), pch = c(17, 19), col = c("Blue", "Green"))
 abline(v = 3, col = 2, lwd = 2)
 
-genes <- subset(genes, rownames(genes) %in% rownames(dat.filt2)
+genes <- subset(genes, rownames(genes) %in% rownames(dat.filt2))
 dat.2 <- dat.filt2
+
+##########
+# PART V - Feature Selection
+##########
+
+# Determine P values for each gene
+type <- lapply(colnames(dat.2), 
+  	function(x) {
+  		if(regexpr("control", x) < 1) {"quercetin"} else {"control"}
+  	})
+
+pval <- c()
+for (i in seq(nrow(dat.2))){
+  	t <- t.test(2^dat.2[i, type == "control"], 2^dat.2[i, type == "quercetin"], alternative = "two.sided")
+  	pval <- c(pval, t$p.value)
+  }
+
+> sum(pval <0.05)
+# Output:
+# 1713
+
+> sum(pval < 0.01)
+# Output:
+# 458
+
