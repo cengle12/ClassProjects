@@ -437,6 +437,150 @@ bottom.5 <- tail(dat.3.info, n = 5L)
 # PART VI - Dimensionality Reduction
 ##########
 
+# Principle Component Analysis
+pca <- prcomp(t(dat.3))
+pca.loads <- pca$x[, 1:3]
 
+# PC1 vs. PC2                                            
+plot(
+  	range(pca.loads[, 1]), 
+  	range(pca.loads[, 2]), 
+  	type = "n",
+  	xlab = "Principal Component 1",
+  	ylab = "Principal Component 2",
+  	main = "PCA Plot for GDS3032 data\n PC1 vs. PC2"
+  	)
+points(
+  	pca.loads[, 1][1:4], 
+  	pca.loads[, 2][1:4],
+  	col = "Blue", pch = 15
+  	)
+points(
+  	pca.loads[, 1][5:8], 
+  	pca.loads[, 2][5:8],
+  	col = "Red", pch = 19
+  	)
+legend(
+  	"bottomright", 
+  	c("control", "quercetin"), 
+  	col = c("Blue", "Red"), pch = c(15,19)
+  	)                                            
+                                            
+# PC2 vs. PC3
+plot(
+  	range(pca.loads[, 2]), 
+  	range(pca.loads[, 3]), 
+  	type = "n",
+  	xlab = "Principal Component 2",
+  	ylab = "Principal Component 3",
+  	main = "PCA Plot for GDS3032 data\n PC2 vs. PC3"
+  	)
+points(
+  	pca.loads[, 2][1:4], 
+  	pca.loads[, 3][1:4],
+  	col = "Blue", pch = 15
+  	)
+points(
+  	pca.loads[, 2][5:8], 
+  	pca.loads[, 3][5:8],
+  	col = "Red", pch = 19
+  	)
+legend(
+  	"bottomleft", 
+  	c("control", "quercetin"), 
+  	col = c("Blue", "Red"), pch = c(15,19)
+  	)                                             
+                                            
+# PC1 vs PC3                                            
+plot(
+  	range(pca.loads[, 1]), 
+  	range(pca.loads[, 3]), 
+  	type = "n",
+  	xlab = "Principal Component 1",
+  	ylab = "Principal Component 3",
+  	main = "PCA Plot for GDS3032 data\n PC1 vs. PC3"
+  	)
+points(
+  	pca.loads[, 1][1:4], 
+  	pca.loads[, 3][1:4],
+  	col = "Blue", pch = 15
+  	)
+points(
+  	pca.loads[, 1][5:8], 
+  	pca.loads[, 3][5:8],
+  	col = "Red", pch = 19
+  	)
+legend(
+  	"bottomright", 
+  	c("control", "quercetin"), 
+  	col = c("Blue", "Red"), pch = c(15,19)
+  	)                                              
+                                            
+pca.var <- round(pca$sdev^2 / sum(pca$sdev^2) * 100, 2)
+sum(pca.var[1:2])  # 82.66% of variability in the data explained by first two eigenvalues
+                                            
+plot(
+	c(1:length(pca.var)), 
+	pca.var, 
+	type = "b", 
+	xlab = "Components",
+	ylab = "Percent Variance", 
+	bg = "Blue", pch = 21
+	)
+title("Scree Plot Illistrating %-Variability Explained By Each Eigenvalue\n control/quercetin - GDS3032 Dataset")                                            
+                                            
+# Nonlinear - Weighted Laplacian Graph
+temp <- t(dat.3)
+temp <- scale(temp, center = T, scale = T)
+                                            
+k.speClust2 <- function (X, qnt=NULL) {
+  dist2full <- function(dis) {
+    n <- attr(dis, "Size")
+        full <- matrix(0, n, n)
+        full[lower.tri(full)] <- dis
+        full + t(full)
+  }
+  dat.dis <- dist(t(X),"euc")^2
+  if(!is.null(qnt)) {eps <- as.numeric(quantile(dat.dis,qnt))}
+  if(is.null(qnt)) {eps <- min(dat.dis[dat.dis!=0])}
+  kernal <- exp(-1 * dat.dis/(eps))
+  K1 <- dist2full(kernal)
+  diag(K1) <- 0
+  D = matrix(0,ncol=ncol(K1),nrow=ncol(K1))
+  tmpe <- apply(K1,1,sum)
+  tmpe[tmpe>0] <- 1/sqrt(tmpe[tmpe>0])
+  tmpe[tmpe<0] <- 0
+  diag(D) <- tmpe
+  L <- D%*% K1 %*% D
+  X <- svd(L)$u
+  Y <- X / sqrt(apply(X^2,1,sum))
+}                                            
+phi <- k.speClust2(t(temp),qnt=NULL)
+
+plot(
+  	range(phi[, 1]), range(phi[, 2]),
+  	xlab = "Phi 1", ylab = "Phi 2",
+  	main = "Weighted Graph Laplacian Plot for GDS3032 Dataset\ncontrol vs quercetin"
+  	)
+points(
+  	phi[, 1][1:4],
+  	phi[, 2][1:4], 
+  	col = "Red", pch = 16, cex = 1.5
+  	)
+points(
+  	phi[, 1][5:8], 
+  	phi[, 2][5:8], 
+  	col = "Blue", pch = 16, cex = 1.5
+  	)
+legend("bottomright", c("control", "quercetin"), col = c("Red", "Blue"), fill = c("Red", "Blue"))                                            
+                                            
+##########
+# PART VII - Clustering
+##########                                            
+                                            
+                                            
+                                            
+                                            
+                                            
 
 
