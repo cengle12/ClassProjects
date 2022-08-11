@@ -173,7 +173,7 @@ colSums(is.na(dat))
 # PART IV - Gene Filtering
 ##########
 
-# First remove genes with very little variation (essentially zero) variation across samples 
+# First remove genes with very little expression (essentially zero)
 dat.filt <- subset(dat, log2(rowMeans(dat)) > 0)
 num.removed <- nrow(dat) - nrow(dat.filt)
 
@@ -188,6 +188,7 @@ lg.mean <- apply(dat.lg, 1, mean)
 lg.var <- apply(dat.lg,1,var)
 lg.cv <- lg.var/lg.mean
 
+# CV vs mean plot for filtered genes across control and quercetin samples
 plot(
  	lg.mean, 
  	lg.cv, 
@@ -197,5 +198,35 @@ plot(
  	col  = c(rep("Blue", ncol(dat)/2), rep("Green", ncol(dat)/2)),
  	pch  = c(rep(17, ncol(dat)/2), rep(19, ncol(dat)/2))
  	)
-  
-  
+ 
+ 
+# Filter again removing genes with mean expression less than 3 on log2 scale
+dat.filt2 <- subset(dat.lg, rowMeans(dat.filt) > 3)
+num.removed.2 <- nrow(dat.lg) - nrow(dat.filt2)
+
+num.removed.2
+# Output:
+# 6479 
+# 
+# Aka 6479 genes removed
+
+lg.mean2 <- apply(dat.filt2, 1, mean) 
+lg.var2 <- apply(dat.filt2,1,var)
+lg.cv2 <- lg.var2/lg.mean2
+
+# CV vs mean plot for second set of filtered genes
+plot(
+  	lg.mean2, 
+  	lg.cv2,
+  	xlim = c(-2, 15), ylim = c(-50, 50),
+  	xlab = "log2(RowMeans)",
+  	ylab = "log2(CV)",
+  	main = "Second Filtered Plot of Row Mean v. Row Variance for control and quercetin samples",
+  	col  = c(rep("Blue", ncol(dat)/2), rep("Green", ncol(dat)/2)),
+  	pch  = c(rep(17, ncol(dat)/2), rep(19, ncol(dat)/2))
+  	)
+legend("bottomright", c("control", "quercetin"), pch = c(17, 19), col = c("Blue", "Green"))
+abline(v = 3, col = 2, lwd = 2)
+
+genes <- subset(genes, rownames(genes) %in% rownames(dat.filt2)
+dat.2 <- dat.filt2
