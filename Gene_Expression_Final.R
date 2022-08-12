@@ -577,10 +577,105 @@ legend("bottomright", c("control", "quercetin"), col = c("Red", "Blue"), fill = 
 ##########
 # PART VII - Clustering
 ##########                                            
-                                            
-                                            
-                                            
-                                            
-                                            
 
+# Manhattan distance for clustering (more conservative distance measure) with median agglomeration
+clust.dist <- dist(t(dat.3), method = "manhattan")
+clust.dat <- hclust(clust.dist, method = "median")					    
+                                            
+# Plotting dendrogram
+plot(
+	clust.dat,
+	labels = colnames(dat.3),  
+	xlab   = "Median Clustered Samples",
+	ylab   = "Manhattan Distance",
+	main   = "Hierarchical Clustering Dendrogram\nRanked Intestinal Cell Differentiation Classification"
+	)					    
 
+# Heatmap of top 100 genes					    
+hm.rg <- c("#FF0000","#CC0000","#990000","#660000","#330000","#000000","#000000","#0A3300","#146600","#1F99
+00","#29CC00","#33FF00")                                            
+
+heatmap(
+ 	dat.3[1:100, ],
+ 	col  = hm.rg,
+ 	xlab = "Samples",
+ 	ylab = "Top Ranked Genes",
+ 	main = "Heatmap for the top 100 genes GDS3032 Dataset",cexCol=0.4
+ 	)
+
+					    
+##########
+# PART VIII - Classification
+########## 					    
+
+# Linear Discriminant Analysis
+# This was first performed by factor and subfactor but there was not enough within group variablity between factors
+# Therefore LDA used only by primary factor or control vs quercetin				    
+					    
+pre.lda <- t(dat.3)
+training <- as.data.frame(rbind(pre.lda[c(1, 3, 5, 7), ]))					    
+test <- as.data.frame(rbind(pre.lda[c(2, 4, 6, 8), ]))
+					    
+te.names <- rownames(test)					    
+#te.names[c(1, 3)] <- paste("5d", te.names[c(1, 3)], sep = "_")
+#te.names[c(2, 4)] <- paste("10d", te.names[c(2, 4)], sep = "_")					    
+test.names <- factor(gsub('GSM[[:digit:]]+_', '', te.names))				#_[[:alpha:]]+
+					    
+train.names <- rownames(training)					    
+#train.names[c(1, 3)] <- paste("5d", train.names[c(1, 3)], sep = "_")					    
+#train.names[c(2, 4)] <- paste("10d", train.names[c(2, 4)], sep = "_")					    
+training.names <- factor(gsub('GSM[[:digit:]]+_', '', train.names))	# _[[:alpha:]]+				    
+
+# Used only first 5,000 genes due to system constraints					    
+dat.lda <- lda(training.names ~ ., data = training[, c(1:5000)])					    
+dat.pred <- predict(dat.lda, data = test[, c(1:5000)])					    
+table(dat.pred$class, test.names)
+
+# Output:
+#            control quercetin
+#  control         2         1
+#  quercetin       0         1
+
+# GSM174947_quercetin incorrectly classified as control
+					    
+					    
+plot(
+	dat.pred$x,
+	bg=as.numeric(factor(training.names)),
+	pch=21,
+	col=1,
+	ylab="Discriminant function",
+	axes=F,
+	xlab="Score",
+	main="Discriminant function for GDS3032 dataset"
+)
+axis(1,at=c(1:4),train.names,las=2,cex.axis=0.4)
+axis(2)					    
+					    
+					    
+# Gene names & GO
+top.5.func <- genes[row.names(top.5),]
+top.5.func
+					    
+# Output:					    
+#                                                        Description  Symbol PVal.Met Fold.Met
+# 206199_at carcinoembryonic antigen related cell adhesion molecule 7 CEACAM7     TRUE     TRUE
+# 220726_at                                                                       TRUE     TRUE
+# 203108_at       G protein-coupled receptor class C group 5 member A  GPRC5A     TRUE     TRUE
+# 218162_at                                       olfactomedin like 3  OLFML3     TRUE     TRUE
+# 212444_at       G protein-coupled receptor class C group 5 member A  GPRC5A     TRUE     TRUE					    
+					    
+					    
+bottom.5.func <- genes[row.names(bottom.5),]
+bottom.5.func					    
+					    
+# Output:
+#                                                                                   Description        Symbol PVal.Met Fold.Met
+# 221091_at                                                                       insulin like 5         INSL5    FALSE    FALSE
+# 201965_s_at                                                                          senataxin          SETX    FALSE    FALSE
+# 203387_s_at                                                        TBC1 domain family member 4        TBC1D4    FALSE    FALSE
+# 210645_s_at tetratricopeptide repeat domain 3 pseudogene 1///tetratricopeptide repeat domain 3 TTC3P1///TTC3    FALSE    FALSE
+# 215421_at                                                         uncharacterized LOC100131510  LOC100131510    FALSE    FALSE					    
+					    
+					    
+					    					    
