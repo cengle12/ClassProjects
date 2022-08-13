@@ -30,7 +30,6 @@
 library(GEOquery)
 library(gplots)
 library(impute)
-library(outliers)
 library(MASS)
 library(multtest)
 
