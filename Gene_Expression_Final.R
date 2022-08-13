@@ -511,7 +511,7 @@ legend(
   	)                                              
                                             
 pca.var <- round(pca$sdev^2 / sum(pca$sdev^2) * 100, 2)
-sum(pca.var[1:2])  # 82.66% of variability in the data explained by first two eigenvalues
+sum(pca.var[1:2])  # 74.3% of variability in the data explained by first two eigenvalues
                                             
 plot(
 	c(1:length(pca.var)), 
@@ -586,8 +586,7 @@ plot(
 	)					    
 
 # Heatmap of top 100 genes					    
-hm.rg <- c("#FF0000","#CC0000","#990000","#660000","#330000","#000000","#000000","#0A3300","#146600","#1F99
-00","#29CC00","#33FF00")                                            
+hm.rg <- c("#FF0000","#CC0000","#990000","#660000","#330000","#000000","#000000","#0A3300","#146600","#1F9900","#29CC00","#33FF00")                                            
 
 heatmap(
  	dat.3[1:100, ],
@@ -648,28 +647,38 @@ axis(2)
 					    
 					    
 # Gene names & GO
-top.5.func <- genes[row.names(top.5),]
-top.5.func
+top.5.sig
 					    
 # Output:					    
-#                                                        Description  Symbol PVal.Met Fold.Met
-# 206199_at carcinoembryonic antigen related cell adhesion molecule 7 CEACAM7     TRUE     TRUE
-# 220726_at                                                                       TRUE     TRUE
-# 203108_at       G protein-coupled receptor class C group 5 member A  GPRC5A     TRUE     TRUE
-# 218162_at                                       olfactomedin like 3  OLFML3     TRUE     TRUE
-# 212444_at       G protein-coupled receptor class C group 5 member A  GPRC5A     TRUE     TRUE					    
+#                                                          Description  Symbol PVal.Met Fold.Met Fold.Change        P.Val
+# 206199_at carcinoembryonic antigen related cell adhesion molecule 7 CEACAM7     TRUE     TRUE   -3.916812 1.767013e-06
+# 220726_at                                                                       TRUE     TRUE    4.233547 1.981332e-06
+# 203108_at       G protein-coupled receptor class C group 5 member A  GPRC5A     TRUE     TRUE   -1.859084 2.268419e-06
+# 218162_at                                       olfactomedin like 3  OLFML3     TRUE     TRUE    1.340310 5.646760e-06
+# 212444_at       G protein-coupled receptor class C group 5 member A  GPRC5A     TRUE     TRUE   -1.727014 6.907572e-06
+# 207790_at                          leucine rich repeat containing 1   LRRC1     TRUE     TRUE   -1.660251 1.888056e-05				    
+
+top.5.fold					    
+
+# Output:					    
+#                                                            Description  Symbol PVal.Met Fold.Met Fold.Change        P.Val
+# 210517_s_at                             A-kinase anchoring protein 12  AKAP12     TRUE     TRUE   -4.251244 1.167626e-02
+# 208338_at                                   purinergic receptor P2X 3   P2RX3     TRUE     TRUE   -4.071281 3.742866e-04
+# 204259_at                                   matrix metallopeptidase 7    MMP7     TRUE     TRUE   -3.981677 5.993508e-03
+# 206199_at   carcinoembryonic antigen related cell adhesion molecule 7 CEACAM7     TRUE     TRUE   -3.916812 1.767013e-06
+# 221393_at         trace amine associated receptor 3 (gene/pseudogene)   TAAR3     TRUE     TRUE   -3.608596 1.331667e-02
+# 200907_s_at                 palladin, cytoskeletal associated protein   PALLD     TRUE     TRUE   -3.594829 3.498722e-04					    
 					    
-					    
-bottom.5.func <- genes[row.names(bottom.5),]
-bottom.5.func					    
+bottom.5.fold			    
 					    
 # Output:
-#                                                                                   Description        Symbol PVal.Met Fold.Met
-# 221091_at                                                                       insulin like 5         INSL5    FALSE    FALSE
-# 201965_s_at                                                                          senataxin          SETX    FALSE    FALSE
-# 203387_s_at                                                        TBC1 domain family member 4        TBC1D4    FALSE    FALSE
-# 210645_s_at tetratricopeptide repeat domain 3 pseudogene 1///tetratricopeptide repeat domain 3 TTC3P1///TTC3    FALSE    FALSE
-# 215421_at                                                         uncharacterized LOC100131510  LOC100131510    FALSE    FALSE					    
+#                                                     Description Symbol PVal.Met Fold.Met Fold.Change        P.Val
+# 217068_at                                                                  TRUE     TRUE    3.442838 3.847880e-04
+# 217623_at                           myosin light chain kinase 3  MYLK3     TRUE     TRUE    3.478276 2.809966e-05
+# 206795_at        coagulation factor II thrombin receptor like 2  F2RL2     TRUE     TRUE    3.572501 1.414994e-03
+# 214218_s_at X inactive specific transcript (non-protein coding)   XIST     TRUE     TRUE    3.750045 3.588891e-04
+# 220726_at                                                                  TRUE     TRUE    4.233547 1.981332e-06
+# 216625_at                                                                  TRUE     TRUE    4.243770 4.700057e-04					    
 					    
 					    
 					    					    
