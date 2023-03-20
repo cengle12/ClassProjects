@@ -77,13 +77,13 @@ Description of files contained within RNASeq
         The main html framework for the webpage document. Contains sections for the input section and the results table
       
     * `RNASeq.cgi:`
-        Common Gateway Interface (CGI) file used to execute the user requests on the server. AJAX requests sent from 
+        Common Gateway Interface (CGI) file used to execute the user requests on the server using Python. AJAX requests sent from 
         the webpage by the user are processed through this file which queries the inputs from the csv files and
         returns the relevant results in a JSON format
 
 ### Author
     Conner Engle
-    Last Updated: 5/16/2022
+    Last Updated: 3/20/2023
     IDE Used: Pycharm
     Python Version: Python 3.8
     
