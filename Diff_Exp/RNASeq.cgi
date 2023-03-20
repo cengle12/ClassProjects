@@ -17,11 +17,6 @@ to_dataframe = robjects.r('function(x) data.frame(x)')
 def main():
     print("Content-Type: application/json\n\n")
     counts_file, design_file, design, control, exp = parse_data(cgi.FieldStorage())
-    # counts_file = './Resources/CountsMatrix.csv'
-    # design_file = './Resources/DesignMatrix.csv'
-    # design = 'condition'
-    # control = 'colon'
-    # exp = 'liver'
     counts_matrix, design_matrix, gene_dict = check_input(counts_file, design_file, design, control, exp)
 
     results = run_analysis(counts_matrix, design_matrix, design, control, exp, gene_dict)
