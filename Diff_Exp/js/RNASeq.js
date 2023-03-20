@@ -83,4 +83,3 @@ $(document).ready( function() {
         return false;  // prevents 'normal' form submission
     });
 });
-
