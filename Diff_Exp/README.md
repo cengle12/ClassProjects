@@ -26,7 +26,7 @@ input variables corresponding to their desired analysis.
 * control or reference subgroup name
 * experimental subgroup name
 
-![Home page](./img/home_page.png)
+![Home page](./img/Home_page.png)
 
 Once the query is submitted, the complete list of results are displayed to the user in table format.
 
